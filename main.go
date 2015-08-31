@@ -14,22 +14,22 @@ import (
 )
 
 const usage = `Slack API Interface.
-	
+
 Sets topic for specified channel.
-	
+
 Usage:
-	$0 -h | --help
-	$0 [options] -k <token> -C <channel> [-t=]
+    $0 -h | --help
+    $0 [options] -k <token> -C <channel> [-t=]
 
 Options:
     -h --help     Show this help.
     -C            Channel operations.
       -t=<topic>  Sets topic for channel.
-	              Supports -i flag and templating capability.
+                  Supports -i flag and templating capability.
     -k=<token>    Slack API Token.
     -i            Read stdin for additional parameters encoded in JSON.
-	              Useful for setting template topic names, like
-				  with flag -t 'Man on duty: {{.name}}'.
+                  Useful for setting template topic names, like
+                  with flag -t 'Man on duty: {{.name}}'.
 `
 
 type API struct {
