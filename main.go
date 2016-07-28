@@ -19,13 +19,15 @@ Sets topic for specified channel.
 
 Usage:
     $0 -h | --help
-    $0 [options] -k <token> -C <channel> [-t=]
+    $0 [options] -k <token> -C <channel> [-t=] [-m=]
 
 Options:
     -h --help     Show this help.
     -C            Channel operations.
       -t=<topic>  Sets topic for channel.
                   Supports -i flag and templating capability.
+      -m=<text>   Send message to channel.
+                  Supports -i flag.
     -k=<token>    Slack API Token.
     -i            Read stdin for additional parameters encoded in JSON.
                   Useful for setting template topic names, like
@@ -79,6 +81,11 @@ func (api *API) handleChannelMode(args map[string]interface{}) error {
 			args["<channel>"].(string),
 			args["-t"].(string),
 		)
+	case args["-m"] != nil:
+		return api.postMessage(
+			args["<channel>"].(string),
+			args["-m"].(string),
+		)
 
 	}
 
@@ -114,4 +121,26 @@ func (api *API) setChannelTopic(channelName, topic string) error {
 	}
 
 	return fmt.Errorf("channel not found: %s", channelName)
+}
+
+func (api *API) postMessage(channel string, message string) error {
+	var (
+		username string
+		asUser   = false
+	)
+	if api.additionalParameters["username"] != nil {
+		username = api.additionalParameters["username"].(string)
+		asUser = true
+	}
+
+	messageParameters := slack.PostMessageParameters{
+		Username: username,
+		AsUser:   asUser,
+	}
+	_, _, err := api.PostMessage(channel, message, messageParameters)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
